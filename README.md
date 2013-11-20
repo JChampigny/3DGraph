@@ -22,8 +22,6 @@ chapter.
 
 ## Install Notes
 
-Download zip file from http://172.16.16.197/closure/download/
-
 Simply connect the API with your server by modifying index.html. The Communicator's
 url should be the address of the JSON.
 
