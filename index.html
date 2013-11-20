@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>3DGraph - The MIG</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <!-- JQuery -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+
+        <!-- Three -->
+        <script type="text/javascript" src="lib/Three.js"></script>
+        <script type="text/javascript" src="lib/raf.js"></script>
+
+        <!-- 3D Graph -->
+        <script type="text/javascript" src="js/Utilities.js"></script>
+        <script type="text/javascript" src="js/GraphCamera.js"></script>
+        <script type="text/javascript" src="js/MouseHandler.js"></script>
+        <script type="text/javascript" src="js/Grid.js"></script>
+        <script type="text/javascript" src="js/geometries/CurveGeo.js"></script>
+        <script type="text/javascript" src="js/geometries/BarChartGeo.js"></script>
+        <script type="text/javascript" src="js/geometries/MultiBarChartGeo.js"></script>
+        <script type="text/javascript" src="js/geometries/TerrainGeo.js"></script>
+        <script type="text/javascript" src="js/Communicator.js"></script>
+        <script type="text/javascript" src="js/Space.js"></script>
+
+        <!-- Samples -->
+        <script type="text/javascript" src="js/Samples.js"></script>
+
+        <script>
+
+            $("body").addClass("loading");
+
+            $(document).ready(function() {
+
+                //Space.getCommunicator().url = "http://localhost/Server/"
+                Space.getCommunicator().getJSON();
+
+                //Space.getCommunicator().setJSONObject(sample_logarithmic);
+                //Space.getCommunicator().setJSONObject(sample_multibarchart);
+
+                $("#drawer").click(function () {
+                    if (this.getElementsByTagName("p")[0].innerHTML == "Open") {
+                        $("#drawer_inside").show("fast");
+                        this.getElementsByTagName("p")[0].innerHTML = "Close";
+                    } else {
+                        $("#drawer_inside").hide("fast")
+                        this.getElementsByTagName("p")[0].innerHTML = "Open";
+                    }
+                });
+            });
+
+
+        </script>
+
+        <div id="menu_container">
+            <div id="fps-counter">
+                FPS: <span id="fps">0</span>
+            </div>
+            <div id="menu">
+                <ul>
+                    <li><a href="#" onclick="Space.switchGeometryType('terrain');">Terrain</a></li>
+                    <li>|</li>
+                    <li><a href="#" onclick="Space.switchGeometryType('barchart');">BarChart</a></li>
+                    <!-- <li>|</li>
+                    <li><a href="#" onclick="Space.switchGeometryType('multibarchart');">MultiBarChart</a></li> -->
+                    <li>|</li>
+                    <li><a href="#" onclick="Space.switchGeometryType('curve');">Curves</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="legend">
+            <div id="drawer_inside">
+                <ul>
+                </ul>
+            </div>
+            <div id="drawer">
+                <p>Close</p>
+            </div>
+        </div>
+
+        <div class="modal">
+            <p>Loading ...</p>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,138 @@
+
+<html>
+<head>
+    <script src="lib/Three.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+    <script src="lib/raf.js"></script>
+</head>
+
+<body>
+<script>
+    function v(x,y,z){
+        return new THREE.Vertex(new THREE.Vector3(x,y,z));
+    }
+
+    var renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(document.body.clientWidth, document.body.clientHeight);
+    document.body.appendChild(renderer.domElement);
+    renderer.setClearColorHex(0xEEEEEE, 1.0);
+    renderer.shadowMapEnabled = true;
+    renderer.shadowMapWidth = renderer.shadowMapHeight = 1024;
+    renderer.shadowMapFov = 30;
+
+    var width = renderer.domElement.width;
+    var height = renderer.domElement.height;
+    var camera = new THREE.PerspectiveCamera( 45, width/height, 1, 10000 );
+    camera.position.y = 30;
+    var scene = new THREE.Scene();
+    var coordScene = new THREE.Scene();
+
+    var light = new THREE.SpotLight(0xFFFFFF);
+    light.position.set(150, 200, 300);
+    light.castShadow = true;
+    scene.add(light);
+
+    var backlight = new THREE.PointLight(0x333366);
+    backlight.position.set(-150, -200, -300);
+    scene.add(backlight);
+
+    var ambient = new THREE.AmbientLight(0x808080);
+    scene.add(ambient);
+
+    var controller = new THREE.Object3D();
+    controller.objects = [];
+    controller.scene = scene;
+    controller.color = 0xFFFFFF;
+    controller.createNew = function() {
+        var cube = new THREE.Mesh(
+                new THREE.CubeGeometry(20,20,20),
+                new THREE.MeshPhongMaterial({color: 0xFFFFFF})
+        );
+        cube.castShadow = cube.receiveShadow = true;
+        this.scene.add(cube);
+        this.objects.push(cube);
+    };
+
+    controller.createNew();
+
+    renderer.render(scene, camera);
+    var paused = false;
+    var last = new Date().getTime();
+    var down = false;
+    var sx = 0, sy = 0;
+    var rotation = 1;
+    var projector = new THREE.Projector();
+
+    camera.position.x = Math.cos(rotation)*150;
+    camera.position.z = Math.sin(rotation)*150;
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '0x';
+
+        for (var i = 0; i < 6; i++)
+            color += letters[Math.round(Math.random() * 15)];
+
+        return color;
+    }
+
+    window.onmousedown = function (ev){
+        if (ev.target == renderer.domElement) {
+            down = true;
+            sx = ev.clientX;
+            sy = ev.clientY;
+            var v = new THREE.Vector3((sx/width) * 2 - 1, -(sy/height) * 2 + 1, 0.5);
+            projector.unprojectVector(v, camera);
+            var ray = new THREE.Ray(camera.position, v.subSelf(camera.position).normalize());
+
+            var intersects = ray.intersectScene(scene);
+
+            if (intersects.length > 0) {
+                alert(intersects[0].object.geometry.vertices.length);
+                intersects[0].object.materials[0].ambient.setHex(getRandomColor());
+            }
+        }
+    };
+
+    window.onmouseup = function(){ down = false; };
+
+    window.onmousemove = function(ev) {
+        if (down) {
+            var dx = ev.clientX - sx;
+            var dy = ev.clientY - sy;
+            rotation += dx/100;
+            camera.position.x = Math.cos(rotation)*150;
+            camera.position.z = Math.sin(rotation)*150;
+            camera.position.y += dy;
+            sx += dx;
+            sy += dy;
+        }
+    }
+
+    renderer.autoClear = false;
+
+    function animate(t) {
+        if (!paused) {
+            last = t;
+            renderer.clear();
+            camera.lookAt( scene.position );
+            renderer.render(scene, camera);
+            renderer.render(coordScene, camera);
+        }
+        window.requestAnimationFrame(animate, renderer.domElement);
+    };
+
+    animate(new Date().getTime());
+
+    onmessage = function(ev) {
+        paused = (ev.data == 'pause');
+    };
+</script>
+</body>
+
+</html>

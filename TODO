@@ -1,0 +1,18 @@
+Global:
+- Fix text size / position for labels
+X Dynamic optional FPS showing (GET "fps=1")
+X Separated CSS file + cleaning index.hmtl
+X Offset terrain on X
+- Initial camera position / rotation for big value ranges
+X Lock camera rotation on top
+X README file
+X Remove grid line in terrain
+- [WEIRD] Raycast issue for highlights
+X colors json optional
+
+Firefox:
+- Zoom froward
+- legend weird offset
+
+Graphs:
+- MultiBarChart
